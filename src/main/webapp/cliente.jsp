@@ -8,7 +8,7 @@
 <script type="text/javascript">
 	function excluir(i) {
 		if(window.confirm("Você quer mesmo excluir o nome de índice " + i)) {
-			location.href = "teste2?i=" + i;
+			location.href = "teste2?i=" + i + "&a=exc";
 		}
 	}
 </script>
@@ -22,10 +22,16 @@
 		String msgstr = (String)msg;
 		out.print(msg);
 	}
+	
+	Cliente cli = (Cliente)request.getAttribute("cli");
+	
+	Object iCli = request.getAttribute("iCli");
+	
 %>
 </div>
 <form action="teste2" method="post">
-		<label>Name </label><input type="text" name="nome" value=""/>	
+		<input type="hidden" name="i" value="<%=iCli%>"/>
+		<label>Name </label><input type="text" name="nome" value="<%=cli.getNome()%>"/>	
 		<input type="submit" id="botao" value="Save"/>
 </form>
 
@@ -33,7 +39,11 @@
 	List<Cliente> lista = (List<Cliente>)request.getAttribute("lista");
 	int i = 0;
 	for(Cliente c : lista) {
-		out.print(c.getNome() + "<a href='javascript:excluir("+i+")'>Excluir</a><br>"); 
+%>
+		<%=c.getNome()%>
+		<a href="javascript:excluir(<%=i%>)">Excluir</a>
+		<a href="teste2?i=<%=i%>&a=edit">Editar</a><br> 
+<%
 		i++;
 	}
 %>

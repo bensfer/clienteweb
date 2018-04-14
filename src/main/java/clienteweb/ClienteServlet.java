@@ -30,12 +30,27 @@ public class ClienteServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
+		Cliente cli = new Cliente();
+		cli.setNome("");
+		int indice = -1;
+
 		String i = req.getParameter("i");
-		if ((i != null) && (i != "")) {
-			cliService.excluir(Integer.parseInt(i));
+		if (i != null && i != "") {
+			indice = Integer.parseInt(i);
+		}
+		
+		String acao = req.getParameter("a");
+		if ((i != null) && (i != "") && (acao != null) && (acao != "")) {
+			if (acao.equals("exc")) {
+				cliService.excluir(indice);
+			} else if (acao.equals("edit")) {
+				cli = cliService.buscaPorIndice(indice);
+			}
 		}
 		
 		RequestDispatcher dispatcher = req.getRequestDispatcher("cliente.jsp");
+		req.setAttribute("iCli", indice);
+		req.setAttribute("cli", cli);
 		req.setAttribute("lista", cliService.getTodosClientes());
 		dispatcher.forward(req, resp);
 		//System.out.println("chamou pelo metodo get4");
@@ -47,18 +62,28 @@ public class ClienteServlet extends HttpServlet {
 
 		// recebendo nome
 		String nome = req.getParameter("nome");
+		String i = req.getParameter("i");
+		int indice = -1;
+		if (i != null && i != "") {
+			indice = Integer.parseInt(i);
+		}
 		
 		// criando objeto cliente e setando nome para ele
-		Cliente cli1 = new Cliente();
-		cli1.setNome(nome);
+		Cliente cli = new Cliente();
+		cli.setNome(nome);
 		
 		// adicionando objeto na lista de clientes
-		cliService.cadastrar(cli1);
+		cliService.salvar(indice, cli);
 		
 		//resp.sendRedirect("teste2");
 		
+		cli = new Cliente();
+		cli.setNome("");
+		
 		RequestDispatcher dispatcher = req.getRequestDispatcher("cliente.jsp");
 		req.setAttribute("msg", "Cadastrado com sucesso!");
+		req.setAttribute("cli", cli);
+		req.setAttribute("iCli", -1);
 		req.setAttribute("lista", cliService.getTodosClientes());
 		dispatcher.forward(req, resp);
 		//System.out.println("chamou pelo metodo post1");
